@@ -4,7 +4,9 @@ import { useState } from 'react'
 
 export function UploadForm() {
   const [file, setFile] = useState<File>()
-    const [to, setTo] = useState('')
+  const [to, setTo] = useState('')
+  const [id, setId] = useState('')
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!file) return
@@ -19,6 +21,9 @@ export function UploadForm() {
       })
       // handle the error
       if (!res.ok) throw new Error(await res.text())
+
+      const { id } = await res.json()
+      setId(id)
     } catch (e: any) {
       // Handle errors here
       console.error(e)
@@ -26,19 +31,23 @@ export function UploadForm() {
   }
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="file"
-        name="file"
-        onChange={(e) => setFile(e.target.files?.[0])}
-          />
-          <div>
-            <label>To</label>
-              <input type="text" name="to"
-              onChange={(e) => setTo(e.target.value)}/>
-              
-          </div>
-      <input type="submit" value="Upload" />
-    </form>
+    <>
+      <form onSubmit={onSubmit}>
+        <input
+          type="file"
+          name="file"
+          onChange={(e) => setFile(e.target.files?.[0])}
+            />
+            <div>
+              <label>To</label>
+                <input type="text" name="to"
+                onChange={(e) => setTo(e.target.value)}/>
+                
+            </div>
+        <input type="submit" value="Upload" />
+      </form>
+
+      <a href={`/api/download/${id}`}>DOWNLOAD</a>
+    </>
   )
 }
